@@ -1,36 +1,31 @@
 const fs = require('fs');
+const csv = require('csv-parser');
+let mostrarArchivo = (archivo, pais, anio) => {
 
-let listarTabla = (base, limite) => {
-    for (let i = 1; i <= limite; i++) {
-        console.log(`${base} * ${i} = ${base *i}`.yellow);
-    }
+    var data = '';
+
+    var readStream = fs.createReadStream(`${archivo}.csv`, 'utf8');
+
+    readStream.on('data', function(chunk) {
+        data += chunk;
+    }).on('end', function() {
+        console.log(data);
+    });
 }
 
-let crearArchivo = (base, limite) => {
+
+let guardarArchivo = (archivo, pais, anio) => {
     return new Promise((resolve, reject) => {
-
-        // validar que sea un número
-        if (!Number(base)) {
-            reject(`El valor introducido ${base} no es un número`);
-            return;
-        }
-
-        let data = '';
-
-        for (let i = 1; i <= limite; i++) {
-            data += `${base} * ${i} = ${base *i}\n`;
-        }
-
-        fs.writeFile(`tablas/tabla-${base}-al-${limite}.txt`, data, (err) => {
+        fs.writeFile(`resultados/${pais}-${anio}.txt`, data, (err) => {
             if (err)
                 reject(err);
             else
-                resolve(`tabla-${base}-al-${limite}.txt`);
+                resolve(`${pais}-${anio}.txt`);
         });
     });
 }
 
 module.exports = {
-    crearArchivo,
-    listarTabla
+    mostrarArchivo,
+    guardarArchivo
 };
